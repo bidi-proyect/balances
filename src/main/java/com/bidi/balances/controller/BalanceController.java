@@ -28,6 +28,7 @@ import java.util.List;
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/balance")
+@CrossOrigin("*")
 public class BalanceController {
 
     private final GetAllBalancesService getAllBalancesService;
