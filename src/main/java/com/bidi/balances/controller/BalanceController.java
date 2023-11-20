@@ -16,11 +16,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.List;
@@ -38,17 +40,22 @@ public class BalanceController {
     private final UpdateProducerService updateProducerService;
 
     @GetMapping("/")
-    public ResponseEntity< List<CreateBalanceResponse> > getAllBalancesService() {
+    public ResponseEntity< List<CreateBalanceResponse> > getAllBalancesService(
+            @RequestHeader("Authorization") String token) {
         return new ResponseEntity<>(getAllBalancesService.getAllBalances(), HttpStatus.OK);
     }
 
     @GetMapping("/{idUser}")
-    public ResponseEntity<CreateBalanceResponse> getBalanceByIdUser (@PathVariable String idUser) throws Exception {
+    public ResponseEntity<CreateBalanceResponse> getBalanceByIdUser (
+            @PathVariable String idUser,
+            @RequestHeader("Authorization") String token) throws Exception {
         return new ResponseEntity<>(getBalanceByPhoneNumberService.getBalances(idUser), HttpStatus.OK);
     }
 
     @PostMapping("/")
-    public ResponseEntity<MessageResponse> createBalance (@RequestBody CreateBalanceRequest createBalanceRequest) {
+    public ResponseEntity<MessageResponse> createBalance (
+            @RequestBody CreateBalanceRequest createBalanceRequest,
+            @RequestHeader("Authorization") String token) {
         MessageResponse response = createBalanceService.createBalance(createBalanceRequest);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -56,7 +63,8 @@ public class BalanceController {
     @PutMapping("/{idUser}")
     public ResponseEntity<MessageResponse> updateProducerAndReceiverBalance(
             @RequestBody UpdateProducerAndReceiverBalanceRequest updateProducerAndReceiverBalanceRequest,
-            @PathVariable String idUser) throws BalanceException {
+            @PathVariable String idUser,
+            @RequestHeader("Authorization") String token) throws BalanceException {
 
         MessageResponse response = updateProducerAndReceiverService.updateProducerAndReceiverBalance(
                 updateProducerAndReceiverBalanceRequest,
@@ -68,7 +76,8 @@ public class BalanceController {
     @PutMapping("/producer/{idUser}")
     public ResponseEntity<MessageResponse> updateProducerBalance(
             @RequestBody UpdateProducerBalanceRequest updateProducerBalanceRequest,
-            @PathVariable String idUser) throws Exception {
+            @PathVariable String idUser,
+            @RequestHeader("Authorization") String token) throws Exception {
 
         MessageResponse response = updateProducerService.updateProducerBalance(updateProducerBalanceRequest, idUser);
         return new ResponseEntity<>(response, HttpStatus.OK);
