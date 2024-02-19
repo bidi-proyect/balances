@@ -45,7 +45,7 @@ public class UpdateProducerAndReceiverImpl implements UpdateProducerAndReceiverS
         balanceRepository.save(balanceReceiver);
         logger.info("Balances updated...");
         logger.info("Request finished.");
-        return new MessageResponse("Balance updated successfully.");
+        return new MessageResponse("00", "Balance updated successfully.");
     }
 
     public void balanceValidations(Balance balanceProducer, Balance balanceReceiver) throws BalanceException {

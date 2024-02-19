@@ -1,44 +1,51 @@
 package com.bidi.balances.service.impl;
 
+import com.bidi.balances.dto.CreateBalanceRequest;
 import com.bidi.balances.dto.UpdateProducerBalanceRequest;
 import com.bidi.balances.entity.Balance;
 import com.bidi.balances.repository.BalanceRepository;
+import com.bidi.balances.service.CreateBalanceService;
 import com.bidi.balances.service.UpdateProducerService;
+import com.bidi.balances.utils.BalanceException;
 import com.bidi.balances.utils.MessageResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+
 import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
 public class UpdateProducerBalanceImpl implements UpdateProducerService {
     private final BalanceRepository balanceRepository;
+    private final CreateBalanceService createBalanceService;
 
     @Override
-    public MessageResponse updateProducerBalance(UpdateProducerBalanceRequest updateProducerBalanceRequest, String idUser) {
-        Balance balance = balanceRepository.findBalanceByPhoneNumber(updateProducerBalanceRequest.getPhoneProducer());
+    public MessageResponse updateProducerBalance(UpdateProducerBalanceRequest request, String idUser) {
+        Balance balance = balanceRepository.findBalanceByPhoneNumber(request.getPhoneProducer());
 
         if (balance == null) {
-            return new MessageResponse("Balance not exist.");
+            throw new BalanceException("Balance does not exits.", HttpStatus.BAD_REQUEST);
         }
 
         try {
-            balance = requestToBalanceProducer(balance, updateProducerBalanceRequest, idUser);
+            balance = requestToBalanceProducer(balance, request, idUser);
         }catch (Exception e) {
-            return new MessageResponse("Error: " + e.getMessage());
+            throw new BalanceException(e.getMessage(), HttpStatus.CONFLICT);
         }
 
         balanceRepository.save(balance);
-        return new MessageResponse("Balance updated successfully.");
+
+        return new MessageResponse("00", "Balance updated successfully.");
     }
 
     public Balance requestToBalanceProducer(
             Balance balanceProducer,
             UpdateProducerBalanceRequest updateProducerBalanceRequest,
-            String idUser) throws Exception {
+            String idUser) {
 
         if (balanceProducer.getBalance() == 0 && updateProducerBalanceRequest.getAction() == 2) {
-            throw new Exception("Balance is not enough.");
+            throw new BalanceException("Balance is not enough.", HttpStatus.BAD_REQUEST);
         }
 
         balanceProducer.setBalance(newBalance(balanceProducer, updateProducerBalanceRequest));

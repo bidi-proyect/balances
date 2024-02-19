@@ -21,11 +21,11 @@ public class CreateBalanceImpl implements CreateBalanceService {
     public MessageResponse createBalance(CreateBalanceRequest createBalanceRequest) {
         Balance balance = balanceRepository.findBalanceByPhoneNumber(createBalanceRequest.getPhoneNumber());
         if(balance != null) {
-            return new MessageResponse("Balance Exists.");
+            return new MessageResponse("01","Balance Exists.");
         }
         balance = requestToBalance(createBalanceRequest);
         balanceRepository.save(balance);
-        return new MessageResponse("Balance created successfully.");
+        return new MessageResponse("01", "Balance created successfully.");
     }
 
     public Balance requestToBalance(CreateBalanceRequest createBalanceRequest) {

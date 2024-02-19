@@ -10,7 +10,7 @@ import org.springframework.http.HttpStatus;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class BalanceException extends Exception{
+public class BalanceException extends RuntimeException{
     private String message;
     private HttpStatus code;
 }

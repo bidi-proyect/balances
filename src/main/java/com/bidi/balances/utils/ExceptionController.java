@@ -10,6 +10,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class ExceptionController {
     @ExceptionHandler(BalanceException.class)
     public ResponseEntity<MessageResponse> handleBalanceException (BalanceException e) {
-        return new ResponseEntity<>(new MessageResponse(e.getMessage()), e.getCode());
+        return new ResponseEntity<>(new MessageResponse("01", e.getMessage()), e.getCode());
     }
 }
